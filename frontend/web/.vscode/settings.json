@@ -1,0 +1,20 @@
+{
+  // Use workspace TypeScript
+  "typescript.tsdk": "node_modules/typescript/lib",
+
+  // Formatting
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // ESLint integration
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // Consider JavaScript/TypeScript part of the project
+  "files.exclude": {
+    "**/.next": true,
+    "**/dist": true,
+    "**/node_modules": true
+  }
+}
