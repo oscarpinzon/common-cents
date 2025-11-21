@@ -12,4 +12,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CommonCents.Application\CommonCents.Application.csproj" />
+    <ProjectReference Include="..\CommonCents.Infrastructure\CommonCents.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
