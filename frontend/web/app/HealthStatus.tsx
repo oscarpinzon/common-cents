@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-type Health = { status: string };
+import { apiClient } from "@/lib/api-client";
 
 export function HealthStatus() {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -15,12 +14,12 @@ export function HealthStatus() {
       return;
     }
 
-    fetch(`${baseUrl}/api/health`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Health check failed");
-        return res.json() as Promise<Health>;
+    apiClient
+      .GET("/api/health")
+      .then(({ error }) => {
+        if (error) throw new Error("Health check failed");
+        setStatus("ok");
       })
-      .then((data) => setStatus(data.status as "ok"))
       .catch(() => setStatus("error"));
   }, [baseUrl]);
 
