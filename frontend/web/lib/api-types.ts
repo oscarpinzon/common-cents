@@ -59,12 +59,21 @@ export interface paths {
                 };
             };
             responses: {
-                /** @description Success */
-                200: {
+                /** @description Created */
+                201: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
                 };
             };
         };
@@ -95,7 +104,9 @@ export interface paths {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": components["schemas"]["HouseholdSummaryDto"];
+                    };
                 };
             };
         };
@@ -115,27 +126,32 @@ export interface components {
             /** Format: double */
             amount?: number;
             description?: string | null;
-            date?: components["schemas"]["DateOnly"];
+            /** Format: date */
+            date?: string;
             paidBy?: string | null;
         };
-        DateOnly: {
+        ErrorResponse: {
+            error?: string | null;
+        };
+        ExpenseDto: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: double */
+            amount?: number;
+            description?: string | null;
+            /** Format: date */
+            date?: string;
+            paidBy?: string | null;
+        };
+        HouseholdSummaryDto: {
             /** Format: int32 */
             year?: number;
             /** Format: int32 */
             month?: number;
-            /** Format: int32 */
-            day?: number;
-            dayOfWeek?: components["schemas"]["DayOfWeek"];
-            /** Format: int32 */
-            readonly dayOfYear?: number;
-            /** Format: int32 */
-            readonly dayNumber?: number;
+            /** Format: double */
+            total?: number;
+            recentExpenses?: components["schemas"]["ExpenseDto"][] | null;
         };
-        /**
-         * Format: int32
-         * @enum {integer}
-         */
-        DayOfWeek: 0 | 1 | 2 | 3 | 4 | 5 | 6;
     };
     responses: never;
     parameters: never;
