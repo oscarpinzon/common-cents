@@ -6,10 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate:api": "openapi-typescript http://localhost:5000/swagger/v1/swagger.json --output lib/api-types.ts"
   },
   "dependencies": {
     "next": "16.0.3",
+    "openapi-fetch": "^0.15.0",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },
@@ -20,6 +22,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.3",
+    "openapi-typescript": "^7.10.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
