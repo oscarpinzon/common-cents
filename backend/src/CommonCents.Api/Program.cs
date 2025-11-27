@@ -5,13 +5,26 @@ using CommonCents.Application.Interfaces;
 using CommonCents.Application.Services;
 using CommonCents.Application.Models;
 using CommonCents.Domain;
-using CommonCents.Infrastructure.InMemory;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.OpenApi.Models;
+using CommonCents.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IExpenseRepository, InMemoryExpenseRepository>();
+// DbContext
+builder.Services.AddDbContext<CommonCentsDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (string.IsNullOrWhiteSpace(connectionString))
+    {
+        throw new InvalidOperationException("DefaultConnection is not configured.");
+    }
+
+    options.UseNpgsql(connectionString);
+});
+
+builder.Services.AddScoped<IExpenseRepository, EfExpenseRepository>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
 
 // JSON options
