@@ -45,6 +45,8 @@ builder.Services.AddSwaggerGen(c =>
         Type = "string",
         Format = "date"
     });
+    
+    c.SupportNonNullableReferenceTypes();
 });
 
 // CORS

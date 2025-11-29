@@ -44,6 +44,12 @@ public class ExpenseService : IExpenseService
             cancellationToken);
 
         var total = expenses.Sum(e => e.Amount);
+        var totalPaidByMe = expenses.Where(e => e.PaidBy == Payer.Me).Sum(e => e.Amount);
+        var totalPaidByPartner = expenses.Where(e => e.PaidBy == Payer.Partner).Sum(e => e.Amount);
+        
+        var halfTotal = totalPaidByMe / 2;
+        var netOwedToMe = totalPaidByMe - halfTotal;
+        var netOwedToPartner = totalPaidByPartner / 2;
 
         var recent = (await _repository.GetRecentAsync(
                 HouseholdConstants.DemoHouseholdId,
@@ -61,6 +67,10 @@ public class ExpenseService : IExpenseService
             Year: year,
             Month: month,
             Total: total,
-            RecentExpenses: recent);
+            RecentExpenses: recent,
+            TotalPaidByMe: totalPaidByMe,
+            TotalPaidByPartner: totalPaidByPartner,
+            NetOwedToMe: netOwedToMe,
+            NetOwedToPartner: netOwedToPartner);
     }
 }
