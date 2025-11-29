@@ -112,6 +112,36 @@ input:focus {
   margin-bottom: 1rem;
 }
 
+.payment-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #111827;
+  border-radius: 0.5rem;
+}
+
+.payment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.payment-row.settlement {
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #1f2937;
+}
+
+.payment-row strong.positive {
+  color: #34d399; /* green for money owed to you */
+}
+
+.payment-row strong.negative {
+  color: #f97373; /* red for money you owe */
+}
+
 .expenses {
   list-style: none;
   padding: 0;

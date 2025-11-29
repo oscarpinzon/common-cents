@@ -125,23 +125,23 @@ export interface components {
         AddExpenseRequest: {
             /** Format: double */
             amount?: number;
-            description?: string | null;
+            description?: string;
             /** Format: date */
             date?: string;
-            paidBy?: string | null;
+            paidBy?: string;
         };
         ErrorResponse: {
-            error?: string | null;
+            error?: string;
         };
         ExpenseDto: {
             /** Format: uuid */
             id?: string;
             /** Format: double */
             amount?: number;
-            description?: string | null;
+            description?: string;
             /** Format: date */
             date?: string;
-            paidBy?: string | null;
+            paidBy?: string;
         };
         HouseholdSummaryDto: {
             /** Format: int32 */
@@ -150,7 +150,15 @@ export interface components {
             month?: number;
             /** Format: double */
             total?: number;
-            recentExpenses?: components["schemas"]["ExpenseDto"][] | null;
+            recentExpenses?: components["schemas"]["ExpenseDto"][];
+            /** Format: double */
+            totalPaidByMe?: number;
+            /** Format: double */
+            totalPaidByPartner?: number;
+            /** Format: double */
+            netOwedToMe?: number;
+            /** Format: double */
+            netOwedToPartner?: number;
         };
     };
     responses: never;

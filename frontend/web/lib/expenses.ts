@@ -1,5 +1,10 @@
 import { apiClient } from "./api-client";
-import { HouseholdSummary, AddExpenseRequest, Payer } from "./api-contracts";
+import {
+  HouseholdSummary,
+  normalizeHouseHoldSummary,
+  AddExpenseRequest,
+  Payer,
+} from "./api-contracts";
 
 export type { HouseholdSummary, AddExpenseRequest, Payer };
 
@@ -10,7 +15,7 @@ export async function fetchSummary(): Promise<HouseholdSummary> {
     throw new Error("Failed to load household summary");
   }
 
-  return data;
+  return normalizeHouseHoldSummary(data);
 }
 
 export async function addExpense(input: AddExpenseRequest): Promise<void> {

@@ -179,10 +179,69 @@ export default function Home() {
                 <strong>
                   {(summary.total ?? 0).toLocaleString(undefined, {
                     style: "currency",
-                    currency: "CAD", // or whatever you use
+                    currency: "CAD",
                   })}
                 </strong>
               </p>
+
+              <div className="payment-summary">
+                <div className="payment-row">
+                  <span>You paid:</span>
+                  <strong>
+                    {(summary.totalPaidByMe ?? 0).toLocaleString(undefined, {
+                      style: "currency",
+                      currency: "CAD",
+                    })}
+                  </strong>
+                </div>
+                <div className="payment-row">
+                  <span>Partner paid:</span>
+                  <strong>
+                    {(summary.totalPaidByPartner ?? 0).toLocaleString(
+                      undefined,
+                      {
+                        style: "currency",
+                        currency: "CAD",
+                      }
+                    )}
+                  </strong>
+                </div>
+                <div className="payment-row">
+                  {(() => {
+                    const netBalance =
+                      summary.totalPaidByMe - summary.totalPaidByPartner;
+
+                    if (netBalance > 0) {
+                      return (
+                        <>
+                          <span>Partner owes you:</span>
+                          <strong className="positive">
+                            {netBalance.toLocaleString(undefined, {
+                              style: "currency",
+                              currency: "CAD",
+                            })}
+                          </strong>
+                        </>
+                      );
+                    } else if (netBalance < 0) {
+                      return (
+                        <>
+                          <span>You owe partner:</span>
+                          <strong className="negative">
+                            {Math.abs(netBalance).toLocaleString(undefined, {
+                              style: "currency",
+                              currency: "CAD",
+                            })}
+                          </strong>
+                        </>
+                      );
+                    } else {
+                      return <span>You are even this month!</span>;
+                    }
+                  })()}
+                </div>
+              </div>
+
               <h3>Recent expenses</h3>
               {!summary.recentExpenses ||
               summary.recentExpenses.length === 0 ? (
