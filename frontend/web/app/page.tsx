@@ -1,43 +1,29 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import {
-  addExpense,
-  fetchSummary,
-  HouseholdSummary,
-  AddExpenseRequest,
-} from "../lib/expenses";
+import { useEffect, useState } from "react";
+import { addExpense, AddExpenseRequest } from "../lib/expenses";
 import { ExpenseForm } from "./components/ExpenseForm";
 import { PaymentSummary } from "./components/PaymentSummary";
 import { RecentExpensesList } from "./components/RecentExpensesList";
+import { useHouseholdSummary } from "./hooks/useHouseholdSummary";
+import { formatCurrency } from "../lib/format";
 
 type UiState = "idle" | "loading" | "error";
 
 // TODO: Architecture this better
 export default function Home() {
-  const [summary, setSummary] = useState<HouseholdSummary | null>(null);
-  const [summaryState, setSummaryState] = useState<UiState>("loading");
+  const {
+    summary,
+    state: summaryState,
+    error: summaryError,
+    refresh,
+  } = useHouseholdSummary();
   const [formState, setFormState] = useState<UiState>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const loadSummary = useCallback(async () => {
-    try {
-      setSummaryState("loading");
-      setErrorMessage(null);
-      const data = await fetchSummary();
-      setSummary(data);
-      setSummaryState("idle");
-    } catch (err) {
-      console.error(err);
-      setSummaryState("error");
-      setErrorMessage("Could not load household summary.");
-    }
-  }, []);
-
   useEffect(() => {
-    void loadSummary();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    void refresh();
+  }, [refresh]);
 
   return (
     <main className="page">
@@ -54,7 +40,7 @@ export default function Home() {
               setErrorMessage(null);
               try {
                 await addExpense(payload);
-                await loadSummary();
+                await refresh();
                 setFormState("idle");
               } catch (err) {
                 console.error(err);
@@ -72,19 +58,14 @@ export default function Home() {
 
           {summaryState === "loading" && <p>Loading summary…</p>}
           {summaryState === "error" && (
-            <p className="error">Could not load summary.</p>
+            <p className="error">{summaryError ?? "Could not load summary."}</p>
           )}
 
           {summary && summaryState === "idle" && (
             <>
               <p className="total">
                 This month&apos;s total:{" "}
-                <strong>
-                  {(summary.total ?? 0).toLocaleString(undefined, {
-                    style: "currency",
-                    currency: "CAD",
-                  })}
-                </strong>
+                <strong>{formatCurrency(summary.total)}</strong>
               </p>
 
               <PaymentSummary summary={summary} />
