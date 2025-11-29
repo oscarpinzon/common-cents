@@ -10,7 +10,6 @@ import { formatCurrency } from "../lib/format";
 
 type UiState = "idle" | "loading" | "error";
 
-// TODO: Architecture this better
 export default function Home() {
   const {
     summary,
