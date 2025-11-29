@@ -1,6 +1,7 @@
 "use client";
 
 import { HouseholdSummary } from "../../lib/expenses";
+import { formatCurrency } from "../../lib/format";
 
 export function RecentExpensesList({ summary }: { summary: HouseholdSummary }) {
   const list = summary.recentExpenses || [];
@@ -16,12 +17,7 @@ export function RecentExpensesList({ summary }: { summary: HouseholdSummary }) {
               {e.date || "N/A"} • Paid by {e.paidBy}
             </div>
           </div>
-          <div className="expense-amount">
-            {(e.amount ?? 0).toLocaleString(undefined, {
-              style: "currency",
-              currency: "CAD",
-            })}
-          </div>
+          <div className="expense-amount">{formatCurrency(e.amount)}</div>
         </li>
       ))}
     </ul>

@@ -1,6 +1,7 @@
 "use client";
 
 import { HouseholdSummary } from "../../lib/expenses";
+import { formatCurrency } from "../../lib/format";
 
 export function PaymentSummary({ summary }: { summary: HouseholdSummary }) {
   const netBalance =
@@ -10,43 +11,25 @@ export function PaymentSummary({ summary }: { summary: HouseholdSummary }) {
     <div className="payment-summary">
       <div className="payment-row">
         <span>You paid:</span>
-        <strong>
-          {(summary.totalPaidByMe ?? 0).toLocaleString(undefined, {
-            style: "currency",
-            currency: "CAD",
-          })}
-        </strong>
+        <strong>{formatCurrency(summary.totalPaidByMe)}</strong>
       </div>
       <div className="payment-row">
         <span>Partner paid:</span>
-        <strong>
-          {(summary.totalPaidByPartner ?? 0).toLocaleString(undefined, {
-            style: "currency",
-            currency: "CAD",
-          })}
-        </strong>
+        <strong>{formatCurrency(summary.totalPaidByPartner)}</strong>
       </div>
       <div className="payment-row">
         {netBalance === 0 && <span>You are even this month!</span>}
         {netBalance > 0 && (
           <>
             <span>Partner owes you:</span>
-            <strong className="positive">
-              {netBalance.toLocaleString(undefined, {
-                style: "currency",
-                currency: "CAD",
-              })}
-            </strong>
+            <strong className="positive">{formatCurrency(netBalance)}</strong>
           </>
         )}
         {netBalance < 0 && (
           <>
             <span>You owe partner:</span>
             <strong className="negative">
-              {Math.abs(netBalance).toLocaleString(undefined, {
-                style: "currency",
-                currency: "CAD",
-              })}
+              {formatCurrency(Math.abs(netBalance))}
             </strong>
           </>
         )}
