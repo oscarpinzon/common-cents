@@ -7,6 +7,14 @@ import { PaymentSummary } from "./components/PaymentSummary";
 import { RecentExpensesList } from "./components/RecentExpensesList";
 import { useHouseholdSummary } from "./hooks/useHouseholdSummary";
 import { formatCurrency } from "../lib/format";
+import {
+  Container,
+  Box,
+  Typography,
+  Paper,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
 
 type UiState = "idle" | "loading" | "error";
 
@@ -25,14 +33,43 @@ export default function Home() {
   }, [refresh]);
 
   return (
-    <main className="page">
-      <div className="container">
-        <header className="header">
-          <h1>CommonCents</h1>
-          <p>Household expenses for you + your partner</p>
-        </header>
+    <Box
+      component="main"
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        py: 4,
+        px: 2,
+      }}
+    >
+      <Container
+        maxWidth="md"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 3,
+        }}
+      >
+        <Box component="header">
+          <Typography variant="h4" component="h1" sx={{ mb: 0.5 }}>
+            CommonCents
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Household expenses for you + your partner
+          </Typography>
+        </Box>
 
-        <section className="card">
+        <Paper
+          component="section"
+          sx={{
+            p: 3,
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            border: 1,
+            borderColor: "#1f2937",
+          }}
+        >
           <ExpenseForm
             onAdd={async (payload: AddExpenseRequest) => {
               setFormState("loading");
@@ -50,36 +87,58 @@ export default function Home() {
             loading={formState === "loading"}
             error={formState === "error" ? errorMessage : null}
           />
-        </section>
+        </Paper>
 
-        <section className="card">
-          <h2>Household summary</h2>
+        <Paper
+          component="section"
+          sx={{
+            p: 3,
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            border: 1,
+            borderColor: "#1f2937",
+          }}
+        >
+          <Typography variant="h6" component="h2">
+            Household summary
+          </Typography>
 
-          {summaryState === "loading" && <p>Loading summary…</p>}
+          {summaryState === "loading" && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 2 }}>
+              <CircularProgress size={20} />
+              <Typography>Loading summary…</Typography>
+            </Box>
+          )}
+
           {summaryState === "error" && (
-            <p className="error">{summaryError ?? "Could not load summary."}</p>
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {summaryError ?? "Could not load summary."}
+            </Alert>
           )}
 
           {summary && summaryState === "idle" && (
             <>
-              <p className="total">
+              <Typography sx={{ mt: 0.5, mb: 2 }}>
                 This month&apos;s total:{" "}
                 <strong>{formatCurrency(summary.total)}</strong>
-              </p>
+              </Typography>
 
               <PaymentSummary summary={summary} />
-              <h3>Recent expenses</h3>
+
+              <Typography variant="h6" component="h3" sx={{ mb: 1 }}>
+                Recent expenses
+              </Typography>
               <RecentExpensesList summary={summary} />
             </>
           )}
 
           {errorMessage && (
-            <p className="error" style={{ marginTop: "0.5rem" }}>
+            <Alert severity="error" sx={{ mt: 1 }}>
               {errorMessage}
-            </p>
+            </Alert>
           )}
-        </section>
-      </div>
-    </main>
+        </Paper>
+      </Container>
+    </Box>
   );
 }
