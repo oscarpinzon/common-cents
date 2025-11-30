@@ -2,6 +2,18 @@
 
 import { useState } from "react";
 import { AddExpenseRequest, Payer } from "../../lib/expenses";
+import {
+  TextField,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  FormLabel,
+  FormControl,
+  Button,
+  Typography,
+  Stack,
+  Alert,
+} from "@mui/material";
 
 interface ExpenseFormProps {
   onAdd(expense: AddExpenseRequest): Promise<void>;
@@ -35,70 +47,74 @@ export function ExpenseForm({ onAdd, loading, error }: ExpenseFormProps) {
 
   return (
     <>
-      <h2>Add an expense</h2>
-      <form onSubmit={handleSubmit} className="form">
-        <div className="field">
-          <label htmlFor="amount">Amount</label>
-          <input
+      <Typography variant="h6" component="h2">
+        Add an expense
+      </Typography>
+      <form onSubmit={handleSubmit}>
+        <Stack spacing={2} sx={{ mt: 2 }}>
+          <TextField
             id="amount"
+            label="Amount"
             type="number"
-            step="0.01"
-            min="0"
+            inputProps={{ step: "0.01", min: "0" }}
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
+            fullWidth
           />
-        </div>
 
-        <div className="field">
-          <label htmlFor="description">Description</label>
-          <input
+          <TextField
             id="description"
+            label="Description"
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Groceries, rent, coffee..."
             required
+            fullWidth
           />
-        </div>
 
-        <div className="field">
-          <label htmlFor="date">Date</label>
-          <input
+          <TextField
             id="date"
+            label="Date"
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
             required
+            fullWidth
+            InputLabelProps={{ shrink: true }}
           />
-        </div>
 
-        <div className="field">
-          <label>Who paid?</label>
-          <div className="radio-group">
-            {(["Me", "Partner"] as Payer[]).map((p) => (
-              <label key={p}>
-                <input
-                  type="radio"
-                  name="paidBy"
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Who paid?</FormLabel>
+            <RadioGroup
+              row
+              name="paidBy"
+              value={paidBy}
+              onChange={(e) => setPaidBy(e.target.value as Payer)}
+            >
+              {(["Me", "Partner"] as Payer[]).map((p) => (
+                <FormControlLabel
+                  key={p}
                   value={p}
-                  checked={paidBy === p}
-                  onChange={() => setPaidBy(p)}
+                  control={<Radio />}
+                  label={p}
                 />
-                {p}
-              </label>
-            ))}
-          </div>
-        </div>
+              ))}
+            </RadioGroup>
+          </FormControl>
 
-        <button type="submit" disabled={loading} className="primary-btn">
-          {loading ? "Adding..." : "Add expense"}
-        </button>
-        {error && (
-          <p className="error" style={{ marginTop: "0.5rem" }}>
-            {error}
-          </p>
-        )}
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={loading}
+            fullWidth
+          >
+            {loading ? "Adding..." : "Add expense"}
+          </Button>
+
+          {error && <Alert severity="error">{error}</Alert>}
+        </Stack>
       </form>
     </>
   );
