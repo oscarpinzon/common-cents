@@ -1,17 +1,8 @@
 :root {
-  color-scheme: light dark;
-}
-
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  background: #0f172a; /* dark slate-ish */
-  color: #e5e7eb; /* light grey */
+  color-scheme: dark;
 }
 
 /* === Layout === */
-
 .page {
   min-height: 100vh;
   display: flex;
@@ -38,7 +29,6 @@ body {
 }
 
 /* === Card === */
-
 .card {
   background: #020617;
   border-radius: 1rem;
@@ -48,7 +38,6 @@ body {
 }
 
 /* === Form === */
-
 .form {
   display: flex;
   flex-direction: column;
@@ -88,7 +77,6 @@ input:focus {
 }
 
 /* === Buttons === */
-
 .primary-btn {
   margin-top: 0.5rem;
   padding: 0.5rem 0.75rem;
@@ -106,7 +94,6 @@ input:focus {
 }
 
 /* === Summary + list === */
-
 .total {
   margin-top: 0.25rem;
   margin-bottom: 1rem;
@@ -135,11 +122,11 @@ input:focus {
 }
 
 .payment-row strong.positive {
-  color: #34d399; /* green for money owed to you */
+  color: #34d399;
 }
 
 .payment-row strong.negative {
-  color: #f97373; /* red for money you owe */
+  color: #f97373;
 }
 
 .expenses {
@@ -173,7 +160,6 @@ input:focus {
 }
 
 /* === Errors === */
-
 .error {
   color: #f97373;
 }

@@ -10,6 +10,9 @@
     "generate:api": "openapi-typescript http://localhost:5000/swagger/v1/swagger.json --output lib/api-types.ts"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.5",
     "next": "16.0.3",
     "openapi-fetch": "^0.15.0",
     "react": "19.2.0",
