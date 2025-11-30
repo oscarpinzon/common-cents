@@ -56,7 +56,7 @@ export function ExpenseForm({ onAdd, loading, error }: ExpenseFormProps) {
             id="amount"
             label="Amount"
             type="number"
-            inputProps={{ step: "0.01", min: "0" }}
+            slotProps={{ htmlInput: { step: "0.01", min: "0" } }}
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
@@ -82,7 +82,7 @@ export function ExpenseForm({ onAdd, loading, error }: ExpenseFormProps) {
             onChange={(e) => setDate(e.target.value)}
             required
             fullWidth
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ inputLabel: { shrink: true } }}
           />
 
           <FormControl component="fieldset">
