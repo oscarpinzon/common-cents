@@ -2,38 +2,67 @@
 
 import { HouseholdSummary } from "../../lib/expenses";
 import { formatCurrency } from "../../lib/format";
+import { Box, Stack, Typography } from "@mui/material";
 
 export function PaymentSummary({ summary }: { summary: HouseholdSummary }) {
   const netBalance =
     (summary.totalPaidByMe ?? 0) - (summary.totalPaidByPartner ?? 0);
 
   return (
-    <div className="payment-summary">
-      <div className="payment-row">
-        <span>You paid:</span>
-        <strong>{formatCurrency(summary.totalPaidByMe)}</strong>
-      </div>
-      <div className="payment-row">
-        <span>Partner paid:</span>
-        <strong>{formatCurrency(summary.totalPaidByPartner)}</strong>
-      </div>
-      <div className="payment-row">
-        {netBalance === 0 && <span>You are even this month!</span>}
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 0.75,
+        mb: 1.5,
+        p: 2,
+        bgcolor: "#111827",
+        borderRadius: 1,
+      }}
+    >
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Typography>You paid:</Typography>
+        <Typography fontWeight={600}>
+          {formatCurrency(summary.totalPaidByMe)}
+        </Typography>
+      </Stack>
+
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Typography>Partner paid:</Typography>
+        <Typography fontWeight={600}>
+          {formatCurrency(summary.totalPaidByPartner)}
+        </Typography>
+      </Stack>
+
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{
+          mt: 0.5,
+          pt: 0.75,
+          borderTop: 1,
+          borderColor: "#1f2937",
+        }}
+      >
+        {netBalance === 0 && <Typography>You are even this month!</Typography>}
         {netBalance > 0 && (
           <>
-            <span>Partner owes you:</span>
-            <strong className="positive">{formatCurrency(netBalance)}</strong>
+            <Typography>Partner owes you:</Typography>
+            <Typography fontWeight={600} color="success.main">
+              {formatCurrency(netBalance)}
+            </Typography>
           </>
         )}
         {netBalance < 0 && (
           <>
-            <span>You owe partner:</span>
-            <strong className="negative">
+            <Typography>You owe partner:</Typography>
+            <Typography fontWeight={600} color="error.main">
               {formatCurrency(Math.abs(netBalance))}
-            </strong>
+            </Typography>
           </>
         )}
-      </div>
-    </div>
+      </Stack>
+    </Box>
   );
 }
