@@ -25,7 +25,8 @@ builder.Services.AddDbContext<CommonCentsDbContext>(options =>
 });
 
 builder.Services.AddScoped<IExpenseRepository, EfExpenseRepository>();
-builder.Services.AddScoped<IExpenseService, ExpenseService>();
+builder.Services.AddScoped<ISettlementRepository, EfSettlementRepository>();
+builder.Services.AddScoped<IHouseholdLedgerService, HouseholdLedgerService>();
 
 // JSON options
 builder.Services.Configure<JsonOptions>(options =>
@@ -45,7 +46,7 @@ builder.Services.AddSwaggerGen(c =>
         Type = "string",
         Format = "date"
     });
-    
+
     c.SupportNonNullableReferenceTypes();
 });
 
@@ -75,7 +76,7 @@ app.MapGet("/api/health", () => Results.Ok(new { status = "ok" }));
 
 app.MapPost("/api/household/expenses", async (
         AddExpenseRequest request,
-        IExpenseService expenseService,
+        IHouseholdLedgerService householdLedgerService,
         CancellationToken cancellationToken) =>
     {
         if (request.Amount <= 0)
@@ -88,7 +89,7 @@ app.MapPost("/api/household/expenses", async (
             return Results.BadRequest(new { error = "PaidBy must be 'Me' or 'Partner'." });
         }
 
-        await expenseService.AddExpenseAsync(
+        await householdLedgerService.AddExpenseAsync(
             amount: request.Amount,
             description: request.Description,
             date: request.Date,
@@ -100,12 +101,41 @@ app.MapPost("/api/household/expenses", async (
     .Produces(StatusCodes.Status201Created)
     .Produces<ErrorResponse>(StatusCodes.Status400BadRequest);
 
-// Get current month summary
+app.MapPost("/api/household/settlements", async Task<IResult> (
+        AddSettlementRequest request,
+        IHouseholdLedgerService ledger,
+        CancellationToken cancellationToken) =>
+    {
+        if (request.Amount <= 0)
+        {
+            return Results.BadRequest(new { error = "Amount must be greater than zero." });
+        }
+
+        if (!Enum.TryParse<Payer>(request.From, ignoreCase: true, out var from))
+        {
+            return Results.BadRequest(new { error = "From must be 'Me' or 'Partner'." });
+        }
+
+        if (!Enum.TryParse<Payer>(request.To, ignoreCase: true, out var to))
+        {
+            return Results.BadRequest(new { error = "To must be 'Me' or 'Partner'." });
+        }
+
+        await ledger.AddSettlementAsync(
+            date: request.Date,
+            from: from,
+            to: to,
+            amount: request.Amount,
+            note: request.Note,
+            cancellationToken);
+
+        return Results.Ok();
+    })
+    .Produces(StatusCodes.Status201Created)
+    .Produces<ErrorResponse>(StatusCodes.Status400BadRequest);
+
 app.MapGet("/api/household/summary", async Task<HouseholdSummaryDto> (
-    IExpenseService expenseService,
-    CancellationToken cancellationToken) =>
-{
-    return await expenseService.GetCurrentMonthSummaryAsync(cancellationToken);
-});
+    IHouseholdLedgerService householdLedgerService,
+    CancellationToken cancellationToken) => await householdLedgerService.GetCurrentMonthSummaryAsync(cancellationToken));
 
 app.Run();

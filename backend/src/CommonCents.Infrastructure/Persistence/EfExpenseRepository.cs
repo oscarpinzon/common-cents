@@ -4,19 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CommonCents.Infrastructure.Persistence;
 
-public class EfExpenseRepository : IExpenseRepository
+public class EfExpenseRepository(CommonCentsDbContext db) : IExpenseRepository
 {
-    private readonly CommonCentsDbContext _dbContext;
-
-    public EfExpenseRepository(CommonCentsDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task AddAsync(Expense expense, CancellationToken cancellationToken = default)
     {
-        await _dbContext.Expenses.AddAsync(expense, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await db.Expenses.AddAsync(expense, cancellationToken);
+        await db.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<IReadOnlyList<Expense>> GetByHouseholdAndMonthAsync(
@@ -25,7 +18,7 @@ public class EfExpenseRepository : IExpenseRepository
         int month,
         CancellationToken cancellationToken = default)
     {
-        var query = _dbContext.Expenses
+        var query = db.Expenses
             .Where(e => e.HouseholdId == householdId &&
                         e.Date.Year == year &&
                         e.Date.Month == month)
@@ -41,7 +34,7 @@ public class EfExpenseRepository : IExpenseRepository
         int count,
         CancellationToken cancellationToken = default)
     {
-        var query = _dbContext.Expenses
+        var query = db.Expenses
             .Where(e => e.HouseholdId == householdId)
             .OrderByDescending(e => e.Date)
             .ThenByDescending(e => e.CreatedAtUtc)

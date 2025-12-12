@@ -3,6 +3,7 @@ using System;
 using CommonCents.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CommonCents.Infrastructure.Migrations
 {
     [DbContext(typeof(CommonCentsDbContext))]
-    partial class CommonCentsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251212011207_AddSettlements")]
+    partial class AddSettlements
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
