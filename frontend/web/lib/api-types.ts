@@ -83,6 +83,52 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/household/settlements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["AddSettlementRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/household/summary": {
         parameters: {
             query?: never;
@@ -122,6 +168,34 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        ActivityCycleDto: {
+            isSettled?: boolean;
+            /** Format: date-time */
+            startedAtUtc?: string;
+            /** Format: date-time */
+            settledAtUtc?: string | null;
+            /** Format: double */
+            netAtEnd?: number;
+            items?: components["schemas"]["ActivityItemDto"][];
+        };
+        ActivityItemDto: {
+            /** Format: date-time */
+            occurredAtUtc?: string;
+            type?: components["schemas"]["ActivityItemType"];
+            description?: string | null;
+            paidBy?: components["schemas"]["Payer"];
+            from?: components["schemas"]["Payer"];
+            to?: components["schemas"]["Payer"];
+            /** Format: double */
+            amount?: number;
+            /** Format: double */
+            netAfterThisItem?: number;
+        };
+        /**
+         * Format: int32
+         * @enum {integer}
+         */
+        ActivityItemType: 1 | 2;
         AddExpenseRequest: {
             /** Format: double */
             amount?: number;
@@ -130,18 +204,17 @@ export interface components {
             date?: string;
             paidBy?: string;
         };
-        ErrorResponse: {
-            error?: string;
-        };
-        ExpenseDto: {
-            /** Format: uuid */
-            id?: string;
-            /** Format: double */
-            amount?: number;
-            description?: string;
+        AddSettlementRequest: {
             /** Format: date */
             date?: string;
-            paidBy?: string;
+            from?: string;
+            to?: string;
+            /** Format: double */
+            amount?: number;
+            note?: string | null;
+        };
+        ErrorResponse: {
+            error?: string;
         };
         HouseholdSummaryDto: {
             /** Format: int32 */
@@ -150,7 +223,6 @@ export interface components {
             month?: number;
             /** Format: double */
             total?: number;
-            recentExpenses?: components["schemas"]["ExpenseDto"][];
             /** Format: double */
             totalPaidByMe?: number;
             /** Format: double */
@@ -159,7 +231,13 @@ export interface components {
             netOwedToMe?: number;
             /** Format: double */
             netOwedToPartner?: number;
+            recentActivityCycles?: components["schemas"]["ActivityCycleDto"][];
         };
+        /**
+         * Format: int32
+         * @enum {integer}
+         */
+        Payer: 0 | 1;
     };
     responses: never;
     parameters: never;

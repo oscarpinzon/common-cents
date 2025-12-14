@@ -1,18 +1,41 @@
 "use client";
 
+import { useState } from "react";
 import { HouseholdSummary } from "../../lib/expenses";
 import { formatCurrency } from "../../lib/format";
 import { PaymentSummary } from "./PaymentSummary";
-import { RecentExpensesList } from "./RecentExpensesList";
-import { Paper, Typography, Box, CircularProgress, Alert } from "@mui/material";
+import { ActivityCycleList } from "./ActivityCycleList";
+import { SettlementDialog } from "./SettlementDialog";
+import {
+  Paper,
+  Typography,
+  Box,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
 
 interface Props {
   summary: HouseholdSummary | null;
   state: "idle" | "loading" | "error";
   error: string | null;
+  onSettlementAdded: () => Promise<void>;
 }
 
-export function HouseholdSummarySection({ summary, state, error }: Props) {
+export function HouseholdSummarySection({
+  summary,
+  state,
+  error,
+  onSettlementAdded,
+}: Props) {
+  const [settlementDialogOpen, setSettlementDialogOpen] = useState(false);
+
+  const suggestedFrom: "Me" | "Partner" =
+    summary && summary.netOwedToPartner > 0 ? "Me" : "Partner";
+
+  const suggestedAmount = summary
+    ? Math.max(summary.netOwedToMe, summary.netOwedToPartner)
+    : 0;
+
   return (
     <Paper
       component="section"
@@ -31,7 +54,7 @@ export function HouseholdSummarySection({ summary, state, error }: Props) {
       {state === "loading" && (
         <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 2 }}>
           <CircularProgress size={20} />
-          <Typography>Loading summary…</Typography>
+          <Typography>Loading summary...</Typography>
         </Box>
       )}
 
@@ -48,12 +71,23 @@ export function HouseholdSummarySection({ summary, state, error }: Props) {
             <strong>{formatCurrency(summary.total)}</strong>
           </Typography>
 
-          <PaymentSummary summary={summary} />
+          <PaymentSummary
+            summary={summary}
+            onSettleUp={() => setSettlementDialogOpen(true)}
+          />
 
           <Typography variant="h6" component="h3" sx={{ mb: 1 }}>
-            Recent expenses
+            Activity Timeline
           </Typography>
-          <RecentExpensesList summary={summary} />
+          <ActivityCycleList cycles={summary.recentActivityCycles} />
+
+          <SettlementDialog
+            open={settlementDialogOpen}
+            onClose={() => setSettlementDialogOpen(false)}
+            onSettlementAdded={onSettlementAdded}
+            suggestedFrom={suggestedFrom}
+            suggestedAmount={suggestedAmount}
+          />
         </>
       )}
     </Paper>

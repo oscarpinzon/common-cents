@@ -2,11 +2,16 @@
 
 import { HouseholdSummary } from "../../lib/expenses";
 import { formatCurrency } from "../../lib/format";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 
-export function PaymentSummary({ summary }: { summary: HouseholdSummary }) {
-  const netBalance =
-    (summary.totalPaidByMe ?? 0) - (summary.totalPaidByPartner ?? 0);
+interface PaymentSummaryProps {
+  summary: HouseholdSummary;
+  onSettleUp?: () => void;
+}
+
+export function PaymentSummary({ summary, onSettleUp }: PaymentSummaryProps) {
+  const hasBalance =
+    summary.netOwedToMe > 0 || summary.netOwedToPartner > 0;
 
   return (
     <Box
@@ -45,24 +50,37 @@ export function PaymentSummary({ summary }: { summary: HouseholdSummary }) {
           borderColor: "#1f2937",
         }}
       >
-        {netBalance === 0 && <Typography>You are even this month!</Typography>}
-        {netBalance > 0 && (
+        {!hasBalance && (
+          <Typography color="text.secondary">You are even!</Typography>
+        )}
+        {summary.netOwedToMe > 0 && (
           <>
             <Typography>Partner owes you:</Typography>
             <Typography fontWeight={600} color="success.main">
-              {formatCurrency(netBalance)}
+              {formatCurrency(summary.netOwedToMe)}
             </Typography>
           </>
         )}
-        {netBalance < 0 && (
+        {summary.netOwedToPartner > 0 && (
           <>
             <Typography>You owe partner:</Typography>
             <Typography fontWeight={600} color="error.main">
-              {formatCurrency(Math.abs(netBalance))}
+              {formatCurrency(summary.netOwedToPartner)}
             </Typography>
           </>
         )}
       </Stack>
+
+      {hasBalance && onSettleUp && (
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={onSettleUp}
+          sx={{ mt: 1, alignSelf: "flex-end" }}
+        >
+          Settle Up
+        </Button>
+      )}
     </Box>
   );
 }

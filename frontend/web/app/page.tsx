@@ -39,6 +39,7 @@ export default function Home() {
           summary={summary}
           state={state}
           error={error}
+          onSettlementAdded={refresh}
         />
       </Container>
     </Box>
