@@ -15,9 +15,19 @@ export function ActivityCycleList({ cycles }: ActivityCycleListProps) {
     );
   }
 
+  // Sort: active cycle first, then by date descending (newest first)
+  const sortedCycles = [...cycles].sort((a, b) => {
+    // Active (unsettled) cycles come first
+    if (a.isSettled !== b.isSettled) {
+      return a.isSettled ? 1 : -1;
+    }
+    // Then sort by start date descending
+    return new Date(b.startedAtUtc).getTime() - new Date(a.startedAtUtc).getTime();
+  });
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-      {cycles.map((cycle, index) => (
+      {sortedCycles.map((cycle, index) => (
         <ActivityCycleAccordion
           key={cycle.startedAtUtc || index}
           cycle={cycle}
